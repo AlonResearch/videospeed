@@ -22,6 +22,7 @@ class VideoSpeedExtension {
       this.VideoController = window.VSC.VideoController;
       this.ActionHandler = window.VSC.ActionHandler;
       this.EventManager = window.VSC.EventManager;
+      this.IntegratedUI = window.VSC.IntegratedUI;
       this.logger = window.VSC.logger;
       this.isBlacklisted = window.VSC.DomUtils.isBlacklisted;
       this.initializeWhenReady = window.VSC.DomUtils.initializeWhenReady;
@@ -58,6 +59,12 @@ class VideoSpeedExtension {
       this.eventManager = new this.EventManager(this.config, null);
       this.actionHandler = new this.ActionHandler(this.config, this.eventManager);
       this.eventManager.actionHandler = this.actionHandler; // Set circular reference
+
+      // Initialize integrated UI if enabled
+      if (this.config.settings.useIntegratedUI) {
+        this.integratedUI = new this.IntegratedUI(this.config, this.actionHandler);
+        this.integratedUI.initialize();
+      }
 
       // Set up observers
       this.setupObservers();
@@ -252,6 +259,15 @@ class VideoSpeedExtension {
         return;
       }
 
+      // Skip floating controller if integrated UI is enabled
+      if (this.config.settings.useIntegratedUI) {
+        this.logger.debug('Integrated UI enabled - skipping floating controller');
+        // Still track the video for integrated UI
+        this.config.addMediaElement(video);
+        video.vsc = { div: null }; // Minimal controller reference
+        return;
+      }
+
       // Check if controller should start hidden based on video visibility/size
       const shouldStartHidden = this.mediaObserver
         ? this.mediaObserver.shouldStartHidden(video)
@@ -316,6 +332,10 @@ class VideoSpeedExtension {
 
       if (this.eventManager) {
         this.eventManager.cleanup();
+      }
+
+      if (this.integratedUI) {
+        this.integratedUI.cleanup();
       }
 
       this.siteHandlerManager.cleanup();
@@ -386,6 +406,22 @@ window.addEventListener('VSC_MESSAGE', (event) => {
       case window.VSC.Constants.MESSAGE_TYPES.TOGGLE_DISPLAY:
         if (extension.actionHandler) {
           extension.actionHandler.runAction('display', null, null);
+        }
+        break;
+
+      case 'VSC_SETTINGS_UPDATED':
+        // Handle settings updates
+        if (extension.config) {
+          extension.config.load().then(() => {
+            // Update integrated UI if setting changed
+            if (extension.config.settings.useIntegratedUI && !extension.integratedUI) {
+              extension.integratedUI = new extension.IntegratedUI(extension.config, extension.actionHandler);
+              extension.integratedUI.initialize();
+            } else if (!extension.config.settings.useIntegratedUI && extension.integratedUI) {
+              extension.integratedUI.cleanup();
+              extension.integratedUI = null;
+            }
+          });
         }
         break;
     }

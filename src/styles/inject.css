@@ -128,3 +128,305 @@ body.vsc-domain-chatgpt-com .vsc-controller {
   top: 0px !important;
   left: 35px !important;
 }
+
+/* Integrated UI Styles */
+#vscSpeedButton {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 8px 12px;
+  margin: 0 2px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 50px;
+  height: 36px;
+  gap: 6px;
+}
+
+#vscSpeedButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+#vscSpeedButton:active {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.vsc-speedometer-icon {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 20px !important;
+  height: 20px !important;
+  color: white !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.vsc-speedometer-icon svg {
+  width: 20px !important;
+  height: 20px !important;
+  fill: currentColor !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Speed indicator is now only shown in the slider, not on the button */
+
+.vsc-speed-menu {
+  background: rgba(28, 28, 28, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 8px 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px); /* Frozen glass effect */
+  min-width: 120px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.vsc-speed-item {
+  padding: 8px 16px;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 400;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vsc-speed-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.vsc-speed-item:active {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.vsc-custom-speed {
+  display: flex;
+  padding: 8px 16px;
+  gap: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 4px;
+}
+
+.vsc-speed-input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  color: white;
+  padding: 4px 8px;
+  font-size: 12px;
+  outline: none;
+}
+
+.vsc-speed-input:focus {
+  border-color: #2196f3;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.vsc-speed-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.vsc-speed-set-btn {
+  background: #2196f3;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  padding: 4px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.vsc-speed-set-btn:hover {
+  background: #1976d2;
+}
+
+.vsc-speed-set-btn:active {
+  background: #1565c0;
+}
+
+/* Velocity Slider Styles - Frozen Glass UI */
+.vsc-velocity-slider {
+  background: rgba(28, 28, 28, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(20px);
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: absolute;
+  z-index: 9999999;
+}
+
+.vsc-slider-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-direction: row;
+  width: 100%;
+}
+
+.vsc-slider-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: white;
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+.vsc-slider-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.vsc-slider-btn:active {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(0.95);
+}
+
+.vsc-slider-input {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.vsc-slider-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg, #2196f3, #1976d2);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  transition: all 0.2s ease;
+}
+
+.vsc-slider-input::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.vsc-slider-input::-webkit-slider-thumb:active {
+  transform: scale(0.95);
+}
+
+.vsc-slider-input::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg, #2196f3, #1976d2);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  transition: all 0.2s ease;
+}
+
+.vsc-slider-input::-moz-range-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.vsc-slider-input::-moz-range-thumb:active {
+  transform: scale(0.95);
+}
+
+.vsc-slider-input::-webkit-slider-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  height: 6px;
+}
+
+.vsc-slider-input::-moz-range-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  height: 6px;
+  border: none;
+}
+
+.vsc-slider-speed-display {
+  text-align: center;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+/* YouTube-specific adjustments */
+.ytp-right-controls #vscSpeedButton {
+  margin-right: 4px;
+}
+
+.ytp-right-controls-right #vscSpeedButton {
+  margin-right: 4px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .vsc-speed-menu {
+    min-width: 100px;
+    max-height: 250px;
+  }
+  
+  .vsc-speed-item {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+  
+  .vsc-custom-speed {
+    padding: 6px 12px;
+  }
+
+  .vsc-velocity-slider {
+    min-width: 160px;
+    padding: 12px;
+  }
+
+  .vsc-slider-container {
+    gap: 8px;
+  }
+
+  .vsc-slider-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+  }
+}

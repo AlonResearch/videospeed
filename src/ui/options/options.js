@@ -285,14 +285,30 @@ async function save_options() {
     var forceLastSavedSpeed = document.getElementById("forceLastSavedSpeed").checked;
     var audioBoolean = document.getElementById("audioBoolean").checked;
     var startHidden = document.getElementById("startHidden").checked;
+    var useIntegratedUI = document.getElementById("useIntegratedUI").checked;
+    var favoriteSpeedsInput = document.getElementById("favoriteSpeeds").value;
     var controllerOpacity = Number(document.getElementById("controllerOpacity").value);
     var controllerButtonSize = Number(document.getElementById("controllerButtonSize").value);
     var logLevel = parseInt(document.getElementById("logLevel").value);
     var blacklist = document.getElementById("blacklist").value;
 
+    // Parse favorite speeds from comma-separated input
+    var favoriteSpeeds = [];
+    if (favoriteSpeedsInput.trim()) {
+      favoriteSpeeds = favoriteSpeedsInput.split(',').map(speed => {
+        const parsed = parseFloat(speed.trim());
+        return isNaN(parsed) ? null : parsed;
+      }).filter(speed => speed !== null && speed >= 0.07 && speed <= 16);
+    }
+    
+    // Use default if no valid speeds provided
+    if (favoriteSpeeds.length === 0) {
+      favoriteSpeeds = [1.0, 1.3, 1.5, 1.75, 2.0];
+    }
+
     // Ensure VideoSpeedConfig singleton is initialized
-    if (!window.VSC.videoSpeedConfig) {
-      window.VSC.videoSpeedConfig = new window.VSC.VideoSpeedConfig();
+    if (!window.VSC || !window.VSC.videoSpeedConfig) {
+      throw new Error('VideoSpeedConfig not available. Please reload the extension.');
     }
 
     // Use VideoSpeedConfig to save settings
@@ -301,6 +317,8 @@ async function save_options() {
       forceLastSavedSpeed: forceLastSavedSpeed,
       audioBoolean: audioBoolean,
       startHidden: startHidden,
+      useIntegratedUI: useIntegratedUI,
+      favoriteSpeeds: favoriteSpeeds,
       controllerOpacity: controllerOpacity,
       controllerButtonSize: controllerButtonSize,
       logLevel: logLevel,
@@ -321,6 +339,21 @@ async function save_options() {
 
     status.textContent = "Options saved";
     status.classList.add("success");
+    
+    // Notify content scripts of settings update
+    try {
+      chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+        if (tabs[0]) {
+          chrome.tabs.sendMessage(tabs[0].id, {
+            type: 'VSC_SETTINGS_UPDATED',
+            payload: { timestamp: Date.now() }
+          });
+        }
+      });
+    } catch (error) {
+      console.warn('Could not notify content scripts of settings update:', error);
+    }
+    
     setTimeout(function () {
       status.textContent = "";
       status.classList.remove("show", "success");
@@ -341,8 +374,35 @@ async function save_options() {
 async function restore_options() {
   try {
     // Ensure VideoSpeedConfig singleton is initialized
-    if (!window.VSC.videoSpeedConfig) {
-      window.VSC.videoSpeedConfig = new window.VSC.VideoSpeedConfig();
+    if (!window.VSC || !window.VSC.videoSpeedConfig) {
+      console.warn('VideoSpeedConfig not available, using default settings');
+      // Use default settings if VideoSpeedConfig is not available
+      const defaultSettings = {
+        rememberSpeed: false,
+        forceLastSavedSpeed: false,
+        audioBoolean: false,
+        startHidden: false,
+        useIntegratedUI: false,
+        favoriteSpeeds: [1.0, 1.3, 1.5, 1.75, 2.0],
+        controllerOpacity: 0.3,
+        controllerButtonSize: 14,
+        logLevel: 'info',
+        blacklist: '',
+        keyBindings: []
+      };
+      
+      // Set default values
+      document.getElementById("rememberSpeed").checked = defaultSettings.rememberSpeed;
+      document.getElementById("forceLastSavedSpeed").checked = defaultSettings.forceLastSavedSpeed;
+      document.getElementById("audioBoolean").checked = defaultSettings.audioBoolean;
+      document.getElementById("startHidden").checked = defaultSettings.startHidden;
+      document.getElementById("useIntegratedUI").checked = defaultSettings.useIntegratedUI;
+      document.getElementById("favoriteSpeeds").value = defaultSettings.favoriteSpeeds.join(',');
+      document.getElementById("controllerOpacity").value = defaultSettings.controllerOpacity;
+      document.getElementById("controllerButtonSize").value = defaultSettings.controllerButtonSize;
+      document.getElementById("logLevel").value = defaultSettings.logLevel;
+      document.getElementById("blacklist").value = defaultSettings.blacklist;
+      return;
     }
 
     // Load settings using VideoSpeedConfig
@@ -353,6 +413,8 @@ async function restore_options() {
     document.getElementById("forceLastSavedSpeed").checked = storage.forceLastSavedSpeed;
     document.getElementById("audioBoolean").checked = storage.audioBoolean;
     document.getElementById("startHidden").checked = storage.startHidden;
+    document.getElementById("useIntegratedUI").checked = storage.useIntegratedUI;
+    document.getElementById("favoriteSpeeds").value = Array.isArray(storage.favoriteSpeeds) ? storage.favoriteSpeeds.join(',') : '1.0, 1.3, 1.5, 1.75, 2.0';
     document.getElementById("controllerOpacity").value = storage.controllerOpacity;
     document.getElementById("controllerButtonSize").value = storage.controllerButtonSize;
     document.getElementById("logLevel").value = storage.logLevel;
@@ -459,8 +521,8 @@ async function restore_defaults() {
     status.classList.add("show");
 
     // Ensure VideoSpeedConfig singleton is initialized
-    if (!window.VSC.videoSpeedConfig) {
-      window.VSC.videoSpeedConfig = new window.VSC.VideoSpeedConfig();
+    if (!window.VSC || !window.VSC.videoSpeedConfig) {
+      throw new Error('VideoSpeedConfig not available. Please reload the extension.');
     }
 
     // Use VideoSpeedConfig to restore defaults

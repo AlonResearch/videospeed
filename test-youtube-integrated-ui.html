@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Integrated UI Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0f0f0f;
+            color: white;
+            font-family: 'Roboto', Arial, sans-serif;
+        }
+        
+        .ytp-player {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            background: #000;
+        }
+        
+        .ytp-video-content {
+            width: 100%;
+            height: calc(100% - 80px);
+            background: linear-gradient(45deg, #1a1a1a, #2a2a2a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #888;
+        }
+        
+        .ytp-chrome-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            display: flex;
+            align-items: flex-end;
+            padding: 0 16px 16px;
+        }
+        
+        .ytp-right-controls {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: auto;
+        }
+        
+        .ytp-button {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            height: 40px;
+        }
+        
+        .ytp-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .ytp-volume-button {
+            position: relative;
+        }
+        
+        .ytp-volume-slider {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            display: none;
+        }
+        
+        .ytp-volume-button:hover .ytp-volume-slider {
+            display: block;
+        }
+        
+        .ytp-subtitles-button {
+            position: relative;
+        }
+        
+        .ytp-autonav-toggle-button {
+            position: relative;
+        }
+        
+        /* VideoSpeed Integrated UI Styles */
+        #vscSpeedButton {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 8px 12px;
+            margin: 0 2px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 50px;
+            height: 36px;
+            gap: 6px;
+        }
+
+        #vscSpeedButton:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        #vscSpeedButton:active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .vsc-speedometer-icon {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 20px !important;
+            height: 20px !important;
+            color: white !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        .vsc-speedometer-icon svg {
+            width: 20px !important;
+            height: 20px !important;
+            fill: currentColor !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        .vsc-speed-indicator {
+            font-size: 12px;
+            font-weight: 500;
+            color: white;
+            min-width: 35px;
+            text-align: center;
+        }
+
+        .vsc-velocity-slider {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(28, 28, 28, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px);
+            min-width: 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 9999999;
+        }
+
+        .vsc-slider-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-direction: row;
+            width: 100%;
+        }
+
+        .vsc-slider-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            width: 32px;
+            height: 32px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .vsc-slider-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .vsc-slider-btn:active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(0.95);
+        }
+
+        .vsc-slider-input {
+            flex: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .vsc-slider-input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #2196f3, #1976d2);
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            transition: all 0.2s ease;
+        }
+
+        .vsc-slider-input::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .vsc-slider-input::-webkit-slider-thumb:active {
+            transform: scale(0.95);
+        }
+
+        .vsc-slider-speed-display {
+            text-align: center;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .vsc-speed-menu {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(28, 28, 28, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 8px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            min-width: 120px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 9999999;
+        }
+
+        .vsc-speed-item {
+            padding: 8px 16px;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 400;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .vsc-speed-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .vsc-speed-item:active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .test-info {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 16px;
+            max-width: 300px;
+            z-index: 10000;
+        }
+
+        .test-info h3 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+
+        .test-info ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .test-info li {
+            margin: 5px 0;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-info">
+        <h3>YouTube Integrated UI Test</h3>
+        <ul>
+            <li><strong>Click speedometer</strong> to cycle speeds</li>
+            <li><strong>Hover speedometer</strong> for slider</li>
+            <li><strong>Right-click</strong> for menu</li>
+            <li><strong>Escape</strong> to hide UI</li>
+        </ul>
+    </div>
+
+    <div class="ytp-player">
+        <div class="ytp-video-content">
+            Mock YouTube Video Player
+        </div>
+        
+        <div class="ytp-chrome-bottom">
+            <div class="ytp-right-controls">
+                <button class="ytp-button ytp-volume-button">
+                    🔊
+                    <div class="ytp-volume-slider"></div>
+                </button>
+                
+                <!-- VideoSpeed Integrated UI Button -->
+                <button id="vscSpeedButton" class="ytp-button">
+                    <div class="vsc-speedometer-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M10.0492532,15.4208574 L16.3060077,6.94493547 C16.5131405,6.66433611 16.8962754,6.58091825 17.2013158,6.75000494 C17.4758699,6.90219275 17.61052,7.21639422 17.5413028,7.51420559 L17.510592,7.61262428 L13.6405266,17.4116224 C13.2205308,18.475051 12.0179777,18.9966563 10.9545491,18.5766605 C10.8710782,18.543694 10.7898393,18.5053348 10.7113465,18.4618255 C9.71108052,17.9073691 9.34968053,16.6470175 9.904137,15.6467516 L9.97303013,15.5314501 L9.97303013,15.5314501 L10.0492532,15.4208574 L16.3060077,6.94493547 L10.0492532,15.4208574 Z M18.6095174,7.41397033 C19.364068,8.02528183 20.0469718,8.75083284 20.6317275,9.58595046 C21.1562296,10.3350171 21.6612578,11.2420254 21.9517027,11.9842912 C22.1026388,12.3700259 21.9122969,12.8050834 21.5265623,12.9560194 C21.1408277,13.1069554 20.7057702,12.9166136 20.5548341,12.530879 C20.4575421,12.2822379 20.3277108,12.0046594 20.1775548,11.7190679 L18.1280514,12.9023464 C17.769332,13.1094531 17.3106392,12.9865468 17.1035324,12.6278273 C16.9136845,12.2990011 17.0011393,11.8861696 17.2933389,11.6601229 L17.3780514,11.6033083 L19.3963044,10.4364308 L19.1658779,10.1227204 C18.8419948,9.70016342 18.4876665,9.31329453 18.1081562,8.96304177 L18.4883177,7.99876394 C18.5262055,7.90283222 18.5550318,7.80534515 18.5751558,7.70730436 L18.5988599,7.55995309 L18.6095174,7.41397033 Z M15.9809484,5.85271523 C15.8318986,5.9392755 15.694531,6.04936208 15.5743759,6.18134222 L15.4601633,6.32055973 L14.919203,7.05349635 C14.2174399,6.80955942 13.4886764,6.6517272 12.7502416,6.58305531 L12.75,9.25589923 C12.75,9.6701128 12.4142136,10.0058992 12,10.0058992 C11.6203042,10.0058992 11.306509,9.72374535 11.2568466,9.35766979 L11.25,9.25589923 L11.2496135,6.56662077 C9.65294084,6.68015443 8.06551588,7.21425939 6.65889532,8.19918572 C5.84294582,8.77051971 5.13152818,9.52142873 4.54015984,10.4038879 L6.62237477,11.6059717 C6.98109424,11.8130785 7.1040006,12.2717713 6.89689382,12.6304908 C6.70704594,12.959317 6.30579591,13.0899946 5.96393397,12.9499658 L5.87237477,12.9050099 L3.79818254,11.7080227 C3.6704134,11.9742424 3.55177265,12.248307 3.44255853,12.5292935 C3.29249811,12.9153696 2.8578736,13.1066981 2.47179751,12.9566377 C2.08572142,12.8065773 1.89439292,12.3719528 2.04445335,11.9858767 C2.85090303,9.91103954 4.12374054,8.14315832 5.79853067,6.97045765 C8.8904309,4.8054858 12.7328827,4.5119546 15.9809484,5.85271523 Z"/>
+                        </svg>
+                    </div>
+                </button>
+                
+                <button class="ytp-button ytp-subtitles-button">CC</button>
+                <button class="ytp-button ytp-autonav-toggle-button">⏭</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock VideoSpeed Integrated UI functionality
+        class MockYouTubeIntegratedUI {
+            constructor() {
+                this.currentSpeed = 1.0;
+                this.favoriteSpeeds = [1.0, 1.3, 1.5, 1.75, 2.0];
+                this.currentSpeedIndex = 0;
+                this.hoverTimeout = null;
+                this.sliderVisible = false;
+                this.menuVisible = false;
+                
+                this.speedButton = document.getElementById('vscSpeedButton');
+                this.speedIndicator = this.speedButton.querySelector('.vsc-speed-indicator');
+                
+                this.setupEventListeners();
+                this.createVelocitySlider();
+                this.createSpeedMenu();
+            }
+            
+            setupEventListeners() {
+                // Click to cycle through favorite speeds
+                this.speedButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.cycleFavoriteSpeed();
+                });
+                
+                // Right-click for speed menu
+                this.speedButton.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.toggleSpeedMenu();
+                });
+                
+                // Hover to show slider
+                this.speedButton.addEventListener('mouseenter', () => {
+                    this.showVelocitySlider();
+                });
+                
+                this.speedButton.addEventListener('mouseleave', () => {
+                    this.hideVelocitySlider();
+                });
+                
+                // Escape key to hide UI
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.hideVelocitySlider();
+                        this.hideSpeedMenu();
+                    }
+                });
+            }
+            
+            cycleFavoriteSpeed() {
+                this.currentSpeedIndex = (this.currentSpeedIndex + 1) % this.favoriteSpeeds.length;
+                this.setSpeed(this.favoriteSpeeds[this.currentSpeedIndex]);
+                console.log(`Cycled to ${this.currentSpeed}x`);
+            }
+            
+            setSpeed(speed) {
+                this.currentSpeed = Math.max(0.07, Math.min(16, speed));
+                this.speedIndicator.textContent = `${this.currentSpeed.toFixed(2)}x`;
+                
+                // Update current speed index if it matches a favorite speed
+                const index = this.favoriteSpeeds.indexOf(this.currentSpeed);
+                if (index !== -1) {
+                    this.currentSpeedIndex = index;
+                }
+                
+                // Update slider if visible
+                if (this.sliderInput) {
+                    this.sliderInput.value = this.currentSpeed;
+                    this.updateSliderSpeedDisplay();
+                }
+                
+                // Update menu if visible
+                this.updateSpeedMenu();
+            }
+            
+            createVelocitySlider() {
+                this.slider = document.createElement('div');
+                this.slider.className = 'vsc-velocity-slider';
+                this.slider.style.display = 'none';
+                
+                const speedDisplay = document.createElement('div');
+                speedDisplay.className = 'vsc-slider-speed-display';
+                speedDisplay.textContent = '1.0x';
+                this.sliderSpeedDisplay = speedDisplay;
+                
+                const sliderContainer = document.createElement('div');
+                sliderContainer.className = 'vsc-slider-container';
+                
+                const minusBtn = document.createElement('button');
+                minusBtn.className = 'vsc-slider-btn';
+                minusBtn.textContent = '-';
+                minusBtn.addEventListener('click', () => this.adjustSpeedByStep(-0.1));
+                
+                this.sliderInput = document.createElement('input');
+                this.sliderInput.type = 'range';
+                this.sliderInput.className = 'vsc-slider-input';
+                this.sliderInput.min = '0.07';
+                this.sliderInput.max = '16';
+                this.sliderInput.step = '0.01';
+                this.sliderInput.value = '1.0';
+                this.sliderInput.addEventListener('input', () => {
+                    this.setSpeed(parseFloat(this.sliderInput.value));
+                    this.updateSliderSpeedDisplay();
+                });
+                
+                const plusBtn = document.createElement('button');
+                plusBtn.className = 'vsc-slider-btn';
+                plusBtn.textContent = '+';
+                plusBtn.addEventListener('click', () => this.adjustSpeedByStep(0.1));
+                
+                sliderContainer.appendChild(minusBtn);
+                sliderContainer.appendChild(this.sliderInput);
+                sliderContainer.appendChild(plusBtn);
+                
+                this.slider.appendChild(speedDisplay);
+                this.slider.appendChild(sliderContainer);
+                
+                // Prevent hiding when hovering over slider
+                this.slider.addEventListener('mouseenter', () => {
+                    if (this.hoverTimeout) {
+                        clearTimeout(this.hoverTimeout);
+                        this.hoverTimeout = null;
+                    }
+                });
+                
+                this.slider.addEventListener('mouseleave', () => {
+                    this.hideVelocitySlider();
+                });
+                
+                document.body.appendChild(this.slider);
+            }
+            
+            createSpeedMenu() {
+                this.speedMenu = document.createElement('div');
+                this.speedMenu.className = 'vsc-speed-menu';
+                this.speedMenu.style.display = 'none';
+                
+                const speeds = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.5, 3.0, 4.0];
+                
+                speeds.forEach(speed => {
+                    const item = document.createElement('div');
+                    item.className = 'vsc-speed-item';
+                    item.textContent = `${speed}x`;
+                    item.addEventListener('click', () => {
+                        this.setSpeed(speed);
+                        this.hideSpeedMenu();
+                        console.log(`Set speed to ${speed}x`);
+                    });
+                    this.speedMenu.appendChild(item);
+                });
+                
+                document.body.appendChild(this.speedMenu);
+            }
+            
+            showVelocitySlider() {
+                if (this.menuVisible) return;
+                
+                const rect = this.speedButton.getBoundingClientRect();
+                this.slider.style.position = 'absolute';
+                this.slider.style.bottom = `${window.innerHeight - rect.top + 10}px`;
+                this.slider.style.left = `${rect.left - 75}px`;
+                this.slider.style.display = 'flex';
+                this.sliderVisible = true;
+                this.sliderInput.value = this.currentSpeed;
+                this.updateSliderSpeedDisplay();
+            }
+            
+            hideVelocitySlider() {
+                this.hoverTimeout = setTimeout(() => {
+                    this.slider.style.display = 'none';
+                    this.sliderVisible = false;
+                }, 300);
+            }
+            
+            toggleSpeedMenu() {
+                if (this.menuVisible) {
+                    this.hideSpeedMenu();
+                } else {
+                    this.showSpeedMenu();
+                }
+            }
+            
+            showSpeedMenu() {
+                if (this.sliderVisible) return;
+                
+                const rect = this.speedButton.getBoundingClientRect();
+                this.speedMenu.style.position = 'absolute';
+                this.speedMenu.style.bottom = `${window.innerHeight - rect.top + 10}px`;
+                this.speedMenu.style.left = `${rect.left}px`;
+                this.speedMenu.style.display = 'block';
+                this.menuVisible = true;
+                this.updateSpeedMenu();
+            }
+            
+            hideSpeedMenu() {
+                this.speedMenu.style.display = 'none';
+                this.menuVisible = false;
+            }
+            
+            adjustSpeedByStep(step) {
+                const newSpeed = this.currentSpeed + step;
+                this.setSpeed(newSpeed);
+                console.log(`Adjusted speed by ${step > 0 ? '+' : ''}${step}x`);
+            }
+            
+            updateSliderSpeedDisplay() {
+                this.sliderSpeedDisplay.textContent = `${this.currentSpeed.toFixed(2)}x`;
+            }
+            
+            updateSpeedMenu() {
+                const items = this.speedMenu.querySelectorAll('.vsc-speed-item');
+                items.forEach(item => {
+                    const speed = parseFloat(item.textContent);
+                    if (Math.abs(speed - this.currentSpeed) < 0.01) {
+                        item.style.background = 'rgba(76, 175, 80, 0.2)';
+                        item.style.color = '#4CAF50';
+                    } else {
+                        item.style.background = 'transparent';
+                        item.style.color = 'white';
+                    }
+                });
+            }
+        }
+        
+        // Initialize the mock UI when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new MockYouTubeIntegratedUI();
+        });
+    </script>
+</body>
+</html> 

@@ -20,9 +20,9 @@ async function updateIcon(tabId, hasActiveControllers) {
     await chrome.action.setIcon({
       tabId: tabId,
       path: {
-        "19": chrome.runtime.getURL(`src/assets/icons/icon19${suffix}.png`),
-        "38": chrome.runtime.getURL(`src/assets/icons/icon38${suffix}.png`),
-        "48": chrome.runtime.getURL(`src/assets/icons/icon48${suffix}.png`)
+        '19': chrome.runtime.getURL(`src/assets/icons/icon19${suffix}.png`),
+        '38': chrome.runtime.getURL(`src/assets/icons/icon38${suffix}.png`),
+        '48': chrome.runtime.getURL(`src/assets/icons/icon48${suffix}.png`)
       }
     });
 
@@ -43,7 +43,7 @@ async function updateIcon(tabId, hasActiveControllers) {
  * Handle controller lifecycle messages from content scripts
  */
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-  if (!sender.tab) return;
+  if (!sender.tab) {return;}
 
   const tabId = sender.tab.id;
 
@@ -119,9 +119,9 @@ async function setDefaultIconState() {
   try {
     await chrome.action.setIcon({
       path: {
-        "19": chrome.runtime.getURL("src/assets/icons/icon19_disabled.png"),
-        "38": chrome.runtime.getURL("src/assets/icons/icon38_disabled.png"),
-        "48": chrome.runtime.getURL("src/assets/icons/icon48_disabled.png")
+        '19': chrome.runtime.getURL('src/assets/icons/icon19_disabled.png'),
+        '38': chrome.runtime.getURL('src/assets/icons/icon38_disabled.png'),
+        '48': chrome.runtime.getURL('src/assets/icons/icon48_disabled.png')
       }
     });
     console.log('Default icon state set to inactive (gray)');

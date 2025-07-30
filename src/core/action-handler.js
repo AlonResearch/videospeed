@@ -437,7 +437,12 @@ class ActionHandler {
       this.blinkController(video.vsc.div);
     }
 
-    // 7. Refresh cooldown to prevent rapid changes
+    // 7. Notify integrated UI if available
+    if (window.videoSpeedExtension?.integratedUI) {
+      window.videoSpeedExtension.integratedUI.updateFromExternalChange(speed);
+    }
+
+    // 8. Refresh cooldown to prevent rapid changes
     if (this.eventManager) {
       this.eventManager.refreshCoolDown();
     }

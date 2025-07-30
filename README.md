@@ -44,7 +44,7 @@ last point to listen to it a few more times.
 
 ### _[Install Chrome Extension](https://chrome.google.com/webstore/detail/video-speed-controller/nffaoalbilbmmfgbnbgppjihopabppdk)_
 
-\*\* Once the extension is installed simply navigate to any page that offers
+** Once the extension is installed simply navigate to any page that offers
 HTML5 video ([example](http://www.youtube.com/watch?v=E9FxNzv1Tr8)), and you'll
 see a speed indicator in top left corner. Hover over the indicator to reveal the
 controls to accelerate, slowdown, and quickly rewind or advance the video. Or,
@@ -65,6 +65,37 @@ settings page as well as add additional shortcut keys to match your
 preferences. As an example, you can assign multiple "preferred speed" shortcuts with different values, allowing you to quickly toggle between your most frequently used speeds. To add a new shortcut, open extension settings
 and click "Add New".
 After making changes or adding new settings, remember to refresh the video viewing page for them to take effect.
+
+### UI Modes
+
+The extension supports two UI modes that can be toggled in the settings:
+
+**Floating UI (Default):** The traditional floating overlay that appears in the top-left corner of videos. This works on all video sites and provides the most compatibility.
+
+**Integrated UI (YouTube-style):** A modern integrated interface that adds speed controls directly into the video player's control bar, similar to how SponsorBlock integrates. This provides a more native experience on supported sites like YouTube.
+
+#### Integrated UI Features
+
+When using the Integrated UI mode, you get access to these enhanced features:
+
+- **Speedometer Icon**: The button displays a speedometer icon alongside the current speed
+- **Click to Cycle**: Click the speed button to cycle through your favorite speeds (default: 1x → 1.3x → 1.5x → 1.75x → 2x → 1x...)
+- **Hover for Fine Control**: Hover over the speed button to reveal a velocity slider with:
+  - Central slider for precise speed adjustment (0.07x to 16x)
+  - Plus/minus buttons for quick 0.1x increments
+  - Real-time speed display
+- **Right-click Menu**: Right-click the speed button to access the full speed menu with preset options
+- **Frozen Glass UI**: All elements feature a modern "frozen glass" aesthetic with backdrop blur effects
+
+#### Customizing Favorite Speeds
+
+You can customize your favorite speeds for the cycling feature in the extension options:
+1. Go to the extension options page
+2. Find the "Favorite speeds for cycling" field
+3. Enter comma-separated speeds (e.g., "1.0, 1.25, 1.5, 2.0")
+4. Save your settings
+
+The speeds will be used in order when you click the speed button in Integrated UI mode.
 
 ![settings Add New shortcut](https://user-images.githubusercontent.com/121805/50726471-50242200-1172-11e9-902f-0e5958387617.jpg)
 

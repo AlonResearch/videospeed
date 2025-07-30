@@ -47,6 +47,10 @@ if (!window.VSC.VideoSpeedConfig) {
         this.settings.startHidden = Boolean(storage.startHidden);
         this.settings.controllerOpacity = Number(storage.controllerOpacity);
         this.settings.controllerButtonSize = Number(storage.controllerButtonSize);
+        this.settings.useIntegratedUI = Boolean(storage.useIntegratedUI);
+        this.settings.favoriteSpeeds = Array.isArray(storage.favoriteSpeeds) 
+          ? storage.favoriteSpeeds 
+          : window.VSC.Constants.DEFAULT_SETTINGS.favoriteSpeeds;
         this.settings.blacklist = String(storage.blacklist);
         this.settings.logLevel = Number(
           storage.logLevel || window.VSC.Constants.DEFAULT_SETTINGS.logLevel

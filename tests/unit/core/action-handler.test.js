@@ -498,7 +498,7 @@ runner.test('adjustSpeed should validate input properly', async () => {
   config.addMediaElement(validVideo);
 
   // String value
-  actionHandler.adjustSpeed(validVideo, "1.5");
+  actionHandler.adjustSpeed(validVideo, '1.5');
   assert.equal(validVideo.playbackRate, 1.0); // Should not change
 
   // null value

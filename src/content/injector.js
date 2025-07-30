@@ -49,6 +49,7 @@ async function injectModules() {
       'src/ui/controls.js',
       'src/ui/drag-handler.js',
       'src/ui/shadow-dom.js',
+      'src/ui/integrated-ui.js',
       'src/site-handlers/base-handler.js',
       'src/site-handlers/netflix-handler.js',
       'src/site-handlers/youtube-handler.js',
